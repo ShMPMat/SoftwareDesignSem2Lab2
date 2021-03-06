@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 
 public class ProductServer {
-    private MongoDAO dao = new MongoDAO();
+    private MongoDAO dao = new MongoDAO("mongodb://localhost:27017");
 
     public void run() {
         HttpServer.newServer(8080)
@@ -106,7 +106,6 @@ public class ProductServer {
     }
 
     private Observable<String> getPrintedProducts(Observable<Currency> currency) {
-        currency.first();
         return dao.getProducts()
                 .concatMap(p -> printProduct(currency, p))
                 .takeLastBuffer(10000, TimeUnit.MILLISECONDS)
@@ -116,13 +115,13 @@ public class ProductServer {
     private Observable<Currency> fetchCurrency(HttpServerRequest<ByteBuf> req) {
         Currency defaultCurrency = Currency.Ruble;
 
-        List<String> userLogin = req.getQueryParameters().get("login");
+        String userLogin = getRequestParamSafe(req, "login");
 
         if (userLogin == null) {
             return Observable.just(defaultCurrency);
         }
 
-        return dao.getUser(userLogin.get(0)).first().map(u -> u.currency).defaultIfEmpty(defaultCurrency);
+        return dao.getUser(userLogin).map(u -> u.currency).defaultIfEmpty(defaultCurrency);
     }
 
     private String getRequestParamSafe(HttpServerRequest<ByteBuf> req, String paramName) {
