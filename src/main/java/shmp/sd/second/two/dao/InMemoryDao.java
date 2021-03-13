@@ -20,7 +20,7 @@ public class InMemoryDao implements ProductDao {
     @Override
     public Observable<User> getUser(String login) {
         return users.stream()
-                .filter((u) -> u.login.equals(login))
+                .filter((u) -> u.getLogin().equals(login))
                 .map(Observable::just)
                 .findFirst()
                 .orElse(Observable.empty());
@@ -35,7 +35,7 @@ public class InMemoryDao implements ProductDao {
 
     @Override
     public Observable<Success> addUser(User user) {
-        Boolean isPresent = users.stream().anyMatch((u) -> u.login.equals(user.login));
+        Boolean isPresent = users.stream().anyMatch((u) -> u.getLogin().equals(user.getLogin()));
 
         if (isPresent) {
             return Observable.empty();
@@ -44,5 +44,10 @@ public class InMemoryDao implements ProductDao {
         users.add(user);
 
         return Observable.just(Success.SUCCESS);
+    }
+
+    public void clear() {
+        users = new ArrayList<>();
+        products = new ArrayList<>();
     }
 }

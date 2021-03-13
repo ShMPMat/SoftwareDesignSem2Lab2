@@ -8,11 +8,11 @@ import shmp.sd.second.two.model.Product;
 import shmp.sd.second.two.model.User;
 
 
-public class MongoDAO implements ProductDao {
+public class MongoDao implements ProductDao {
     private MongoClient client;
     private MongoDatabase database;
 
-    public MongoDAO(String address) {
+    public MongoDao(String address) {
         client = MongoClients.create(address);
         database = client.getDatabase("lab_second_shop");
     }

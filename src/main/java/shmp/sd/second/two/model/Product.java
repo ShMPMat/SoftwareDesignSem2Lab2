@@ -4,9 +4,8 @@ import org.bson.Document;
 
 
 public class Product {
-    public final String name;
-    public final int price;
-
+    private final String name;
+    private final int price;
 
     public Product(Document doc) {
         this(doc.getString("name"), doc.getInteger("price"));
@@ -15,6 +14,14 @@ public class Product {
     public Product(String name, int price) {
         this.name = name;
         this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPrice() {
+        return price;
     }
 
     @Override

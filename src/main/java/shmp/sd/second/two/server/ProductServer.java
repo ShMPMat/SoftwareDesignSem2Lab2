@@ -11,8 +11,6 @@ import shmp.sd.second.two.model.Product;
 import shmp.sd.second.two.model.User;
 import shmp.sd.second.two.server.util.ObjectMakers;
 
-import java.util.Objects;
-
 import static shmp.sd.second.two.server.util.SafeParameterHandler.getRequestParamSafe;
 
 
@@ -36,7 +34,8 @@ public class ProductServer {
                                 User user = ObjectMakers.makeUser(req);
                                 Observable<Success> success = dao.addUser(user);
 
-                                response = success.map(Objects::toString);
+                                response = success.map((s) -> "{success: '" + s + "'}")
+                                        .defaultIfEmpty("{success: 'FAILED'}");
                             } catch (ServerException e) {
                                 response = Observable.just(e.getMessage());
                             }
@@ -63,8 +62,8 @@ public class ProductServer {
 
     private Observable<String> printProduct(Observable<Currency> currency, Product product) {
         return currency.first().map(c ->
-                "{ 'name': '" + product.name +
-                        "', 'price': '" + c.getCurrencyFormatter().apply(product.price) +
+                "{ 'name': '" + product.getName() +
+                        "', 'price': '" + c.getCurrencyFormatter().apply(product.getPrice()) +
                         "' }"
         );
     }
@@ -85,6 +84,6 @@ public class ProductServer {
             return Observable.just(defaultCurrency);
         }
 
-        return dao.getUser(userLogin).map(u -> u.currency).defaultIfEmpty(defaultCurrency);
+        return dao.getUser(userLogin).map(User::getCurrency).defaultIfEmpty(defaultCurrency);
     }
 }

@@ -4,9 +4,8 @@ import org.bson.Document;
 
 
 public class User {
-    public final String login;
-    public final Currency currency;
-
+    private final String login;
+    private final Currency currency;
 
     public User(Document doc) {
         this(doc.getString("login"), Currency.getById(doc.getInteger("currencyId")));
@@ -15,6 +14,14 @@ public class User {
     public User(String login, Currency currency) {
         this.login = login;
         this.currency = currency;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public Currency getCurrency() {
+        return currency;
     }
 
     @Override
